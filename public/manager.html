@@ -1,0 +1,1688 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>FaceBreak — Painel Gerencial</title>
+    <style>
+      :root {
+        --bg: #f4f6f8;
+        --surface: #fff;
+        --surface2: #f8fafb;
+        --text: #17212b;
+        --muted: #66717d;
+        --border: #dfe4e8;
+        --blue: #2457a6;
+        --green: #21854b;
+        --yellow: #b77912;
+        --red: #b43a3a;
+        --shadow: 0 8px 24px rgba(20, 35, 50, 0.06);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font:
+          14px Arial,
+          Helvetica,
+          sans-serif;
+      }
+      button,
+      input,
+      select,
+      textarea {
+        font: inherit;
+      }
+      .top {
+        height: 64px;
+        background: #fff;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 28px;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .mark {
+        width: 34px;
+        height: 34px;
+        background: #1f4f91;
+        color: #fff;
+        display: grid;
+        place-items: center;
+        font-weight: 700;
+        border-radius: 6px;
+      }
+      .avatar-empty {
+        width: 36px;
+        height: 36px;
+        flex: none;
+        border-radius: 50%;
+        background: #e6eaee;
+        overflow: hidden;
+        display: block;
+      }
+      .avatar-empty svg {
+        display: block;
+        width: 100%;
+        height: 100%;
+        fill: #a3adb8;
+      }
+      .brand b {
+        display: block;
+      }
+      .brand small {
+        color: var(--muted);
+      }
+      .layout {
+        display: grid;
+        grid-template-columns: 220px 1fr;
+        min-height: calc(100vh - 64px);
+      }
+      aside {
+        background: #18232d;
+        color: #dce4ea;
+        padding: 18px 12px;
+      }
+      aside button {
+        display: block;
+        width: 100%;
+        text-align: left;
+        border: 0;
+        background: transparent;
+        color: inherit;
+        padding: 12px;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-bottom: 3px;
+      }
+      aside button:hover,
+      aside button.active {
+        background: #263643;
+      }
+      main {
+        padding: 28px;
+        max-width: 1500px;
+        width: 100%;
+        margin: 0 auto;
+        align-self: start;
+      }
+      .page {
+        display: none;
+      }
+      .page.active {
+        display: block;
+      }
+      .title {
+        display: flex;
+        justify-content: space-between;
+        align-items: end;
+        margin-bottom: 22px;
+      }
+      .title h1 {
+        margin: 0;
+        font-size: 25px;
+      }
+      .title p {
+        margin: 6px 0 0;
+        color: var(--muted);
+      }
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px;
+      }
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+        padding: 18px;
+      }
+      .metric small {
+        color: var(--muted);
+        display: block;
+      }
+      .metric strong {
+        font-size: 29px;
+        display: block;
+        margin-top: 7px;
+      }
+      .grid2 {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 16px;
+        margin-top: 16px;
+      }
+      .panel {
+        background: #fff;
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+      }
+      .panel-head {
+        padding: 14px 16px;
+        border-bottom: 1px solid var(--border);
+        font-weight: 700;
+      }
+      .panel-body {
+        padding: 16px;
+      }
+      .face-enroll-grid {
+        display: grid;
+        grid-template-columns: minmax(300px, 1.05fr) minmax(250px, 0.95fr);
+        gap: 16px;
+        align-items: start;
+      }
+      .face-camera-box {
+        height: 330px;
+        background: #07111f;
+        border-radius: 14px;
+        position: relative;
+        overflow: hidden;
+        display: grid;
+        place-items: center;
+      }
+      .face-camera-box video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transform: scaleX(-1);
+      }
+      .face-oval {
+        position: absolute;
+        width: 190px;
+        height: 250px;
+        border: 3px solid #38bdf8;
+        border-radius: 50%;
+        box-shadow:
+          0 0 0 999px rgba(0, 0, 0, 0.42),
+          0 0 28px rgba(56, 189, 248, 0.18);
+      }
+      .face-guide-text {
+        position: absolute;
+        left: 12px;
+        right: 12px;
+        bottom: 10px;
+        text-align: center;
+        color: #fff;
+        background: rgba(0, 0, 0, 0.62);
+        padding: 9px;
+        border-radius: 8px;
+        font-size: 11px;
+      }
+      .face-preview {
+        height: 260px;
+        background: #f5f8fb;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        display: grid;
+        place-items: center;
+        color: var(--muted);
+        overflow: hidden;
+      }
+      .face-preview img {
+        display: block;
+        width: auto;
+        height: 100%;
+        max-width: 100%;
+        object-fit: contain;
+        border-radius: 10px;
+      }
+      .field input:invalid {
+        border-color: #d79a9a;
+      }
+      @media (max-width: 800px) {
+        .face-enroll-grid {
+          grid-template-columns: 1fr;
+        }
+        .face-camera-box {
+          height: 300px;
+        }
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        padding: 11px 9px;
+        border-bottom: 1px solid var(--border);
+        text-align: left;
+        font-size: 13px;
+      }
+      th {
+        font-size: 11px;
+        text-transform: uppercase;
+        color: var(--muted);
+        background: #fafbfc;
+      }
+      .badge {
+        display: inline-block;
+        padding: 4px 7px;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: 700;
+      }
+      .g {
+        background: #e6f4eb;
+        color: #176b3b;
+      }
+      .y {
+        background: #fff3d8;
+        color: #8a5a00;
+      }
+      .r {
+        background: #f9e6e6;
+        color: #913030;
+      }
+      .b {
+        background: #e7eef9;
+        color: #1d4e8e;
+      }
+      .toolbar {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 14px;
+      }
+      .btn {
+        border: 1px solid var(--border);
+        background: #fff;
+        padding: 9px 12px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      .btn.primary {
+        background: #2457a6;
+        color: #fff;
+        border-color: #2457a6;
+      }
+      .btn.danger {
+        color: #9d2e2e;
+      }
+      .btn:hover {
+        filter: brightness(0.98);
+      }
+      .form {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+      .field {
+        display: grid;
+        gap: 5px;
+      }
+      .field label {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--muted);
+      }
+      .field input,
+      .field select,
+      .field textarea {
+        width: 100%;
+        border: 1px solid var(--border);
+        padding: 10px;
+        border-radius: 5px;
+        background: #fff;
+      }
+      .field.full {
+        grid-column: 1/-1;
+      }
+      .actions {
+        display: flex;
+        gap: 8px;
+        justify-content: flex-end;
+        margin-top: 14px;
+      }
+      .chart {
+        height: 210px;
+        display: flex;
+        align-items: end;
+        gap: 12px;
+        padding: 18px;
+      }
+      .bar {
+        flex: 1;
+        background: #7395c4;
+        min-height: 8px;
+        position: relative;
+      }
+      .bar span {
+        position: absolute;
+        bottom: 100%;
+        font-size: 11px;
+        color: var(--muted);
+        margin-bottom: 4px;
+      }
+      .bar label {
+        position: absolute;
+        top: 100%;
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 5px;
+        width: 100%;
+        text-align: center;
+      }
+      .notice {
+        padding: 12px;
+        background: #f5f8fb;
+        border: 1px solid var(--border);
+        color: #52606d;
+        margin-bottom: 14px;
+      }
+      .empty {
+        padding: 25px;
+        text-align: center;
+        color: var(--muted);
+      }
+      @media (max-width: 1000px) {
+        .cards {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .grid2 {
+          grid-template-columns: 1fr;
+        }
+      }
+      @media (max-width: 700px) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+        aside {
+          display: flex;
+          overflow: auto;
+        }
+        .cards {
+          grid-template-columns: 1fr 1fr;
+        }
+        main {
+          padding: 16px;
+        }
+        .form {
+          grid-template-columns: 1fr;
+        }
+      }
+      .table-actions {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+        flex-wrap: nowrap;
+      }
+      .countdown-cell {
+        min-width: 165px;
+      }
+      .countdown-top {
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--muted);
+        margin-bottom: 3px;
+      }
+      .countdown {
+        font-weight: 800;
+        font-variant-numeric: tabular-nums;
+        font-size: 15px;
+      }
+      .countdown.ok {
+        color: var(--green);
+      }
+      .countdown.warn {
+        color: var(--yellow);
+      }
+      .countdown.danger {
+        color: var(--red);
+      }
+      .sector-form {
+        margin-bottom: 16px;
+      }
+      .how-box {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-top: 16px;
+      }
+      .how-step {
+        border: 1px solid var(--border);
+        background: var(--surface2);
+        padding: 14px;
+        border-radius: 7px;
+      }
+      .how-step strong {
+        display: block;
+        margin-bottom: 5px;
+      }
+      .how-step span {
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.5;
+      }
+      @media (max-width: 800px) {
+        .how-box {
+          grid-template-columns: 1fr;
+        }
+      }
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 38px;
+        line-height: 1;
+        white-space: nowrap;
+      }
+      .actions {
+        align-items: center;
+        flex-wrap: wrap;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="top">
+      <div class="brand">
+        <div class="mark">FB</div>
+        <div><b>FaceBreak</b><small>Painel gerencial</small></div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 12px">
+        <span class="avatar-empty" aria-hidden="true"
+          ><svg viewBox="0 0 36 36">
+            <circle cx="18" cy="14" r="6.5" />
+            <path d="M5 36c0-7.7 5.8-12.5 13-12.5S31 28.3 31 36z" />
+          </svg></span
+        >
+        <div id="currentUser" class="badge">Carregando...</div>
+        <div id="clock">--:--:--</div>
+        <button class="btn" type="button" onclick="logoutAdmin()">Sair</button>
+      </div>
+    </header>
+    <div class="layout">
+      <aside>
+        <button class="active" data-page="dashboard">Dashboard</button>
+        <button data-page="employees" data-admin-only>Funcionários</button>
+        <button data-page="sectors" data-admin-only>Setores</button>
+        <button data-page="monitor">Monitoramento</button>
+        <button data-page="justifications">Justificativas</button>
+        <button data-page="reports">Relatórios</button
+        ><button data-page="users" data-admin-only>Usuários</button>
+      </aside>
+      <main>
+        <section class="page active" id="dashboard">
+          <div class="title">
+            <div>
+              <h1>Visão geral</h1>
+              <p>Acompanhamento da jornada, presença e pausas.</p>
+            </div>
+            <div class="actions" style="margin-top: 0">
+              <button class="btn" onclick="window.open('/terminal', '_blank')">
+                Abrir terminal facial</button
+              ><button class="btn primary" onclick="downloadCSV()">
+                Baixar relatório
+              </button>
+            </div>
+          </div>
+          <div class="cards">
+            <div class="card metric">
+              <small>Funcionários ativos</small><strong id="mActive">0</strong>
+            </div>
+            <div class="card metric">
+              <small>Trabalhando agora</small><strong id="mWorking">0</strong>
+            </div>
+            <div class="card metric">
+              <small>Em pausa</small><strong id="mPaused">0</strong>
+            </div>
+            <div class="card metric">
+              <small>Retornos / pausas pendentes</small
+              ><strong id="mPending">0</strong>
+            </div>
+          </div>
+          <div class="grid2">
+            <div class="panel">
+              <div class="panel-head">Situação por setor</div>
+              <div class="panel-body" id="sectorChart"></div>
+            </div>
+            <div class="panel">
+              <div class="panel-head">Alertas</div>
+              <div class="panel-body" id="alerts"></div>
+            </div>
+          </div>
+          <div class="panel" style="margin-top: 16px">
+            <div class="panel-head">Como o registro facial funciona</div>
+            <div class="panel-body">
+              <div class="how-box">
+                <div class="how-step">
+                  <strong>1. Cadastro</strong
+                  ><span
+                    >O Administrador cadastra o funcionário em Funcionários e
+                    captura a face pela câmera. O descritor e a imagem ficam
+                    ligados ao banco.</span
+                  >
+                </div>
+                <div class="how-step">
+                  <strong>2. Terminal</strong
+                  ><span
+                    >O trabalhador usa o terminal facial. O sistema reconhece o
+                    rosto e identifica automaticamente a pessoa, sem digitar
+                    nome.</span
+                  >
+                </div>
+                <div class="how-step">
+                  <strong>3. Jornada e pausas</strong
+                  ><span
+                    >O mesmo reconhecimento registra entrada, início da pausa e
+                    retorno. O sistema calcula o tempo e leva a ocorrência ao
+                    monitoramento e relatório.</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="page" id="employees">
+          <div class="title">
+            <div>
+              <h1>Funcionários</h1>
+              <p>Cadastro e status dos trabalhadores.</p>
+            </div>
+            <button class="btn primary" onclick="newEmployee()">
+              Novo funcionário
+            </button>
+          </div>
+          <div class="panel">
+            <div class="panel-body">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Nome</th>
+                    <th>CPF</th>
+                    <th>Setor</th>
+                    <th>Pausa</th>
+                    <th>Status</th>
+                    <th>Face</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="employeeTable"></tbody>
+              </table>
+            </div>
+          </div>
+          <div
+            class="panel"
+            id="employeeForm"
+            style="display: none; margin-top: 16px"
+          >
+            <div class="panel-head">Cadastro de funcionário</div>
+            <div class="panel-body">
+              <form class="form" onsubmit="saveEmployee(event)">
+                <input type="hidden" id="eid" />
+                <div class="field">
+                  <label>Nome completo</label
+                  ><input
+                    id="ename"
+                    required
+                    autocomplete="name"
+                    inputmode="text"
+                    pattern="[A-Za-zÀ-ÖØ-öø-ÿ '-]+"
+                    title="Digite somente letras e espaços"
+                  />
+                </div>
+                <div class="field">
+                  <label>CPF</label
+                  ><input
+                    id="ecpf"
+                    required
+                    inputmode="numeric"
+                    maxlength="14"
+                    placeholder="000.000.000-00"
+                    autocomplete="off"
+                    aria-describedby="cpfHelp"
+                  /><small id="cpfHelp" style="color: var(--muted)"
+                    >Digite somente números. O sistema calcula e valida os
+                    dígitos do CPF.</small
+                  >
+                </div>
+                <div class="field">
+                  <label>Setor</label
+                  ><select id="esector"></select>
+                </div>
+                <div class="field">
+                  <label>Atividade</label
+                  ><input id="eactivity" value="Produção" />
+                </div>
+                <div class="field">
+                  <label>Jornada</label><input id="eshift" value="08:00" />
+                </div>
+                <div class="field">
+                  <label>Tempo até a pausa (min)</label
+                  ><input id="ework" type="number" min="1" value="100" />
+                </div>
+                <div class="field">
+                  <label>Duração da pausa (min)</label
+                  ><input id="ebreak" type="number" min="1" value="20" />
+                </div>
+                <div class="field">
+                  <label>Status</label
+                  ><select id="estatus">
+                    <option>Ativo</option>
+                    <option>Inativo</option>
+                  </select>
+                </div>
+                <div class="field full">
+                  <label>Cadastro facial</label>
+                  <div class="notice" id="faceNotice">
+                    A captura usa apenas o rosto detectado. O recorte mantém a
+                    proporção original para não achatar a imagem. Apenas um
+                    rosto é permitido.
+                  </div>
+                  <div class="face-enroll-grid">
+                    <div class="face-camera-box">
+                      <video id="faceVideo" autoplay muted playsinline></video>
+                      <div class="face-oval"></div>
+                      <div id="faceGuideText" class="face-guide-text">
+                        Aproxime o rosto até preencher o contorno, sem cortar
+                        testa ou queixo.
+                      </div>
+                    </div>
+                    <div>
+                      <div id="facePreview" class="face-preview">
+                        Nenhuma captura
+                      </div>
+                      <div class="actions" style="justify-content: flex-start">
+                        <button
+                          type="button"
+                          class="btn"
+                          onclick="startEnrollCamera()"
+                        >
+                          Ativar câmera</button
+                        ><button
+                          type="button"
+                          class="btn primary"
+                          id="captureFaceBtn"
+                          onclick="captureEnrollmentFace()"
+                          disabled
+                        >
+                          Capturar rosto
+                        </button>
+                      </div>
+                      <div
+                        id="faceCaptureStatus"
+                        class="notice"
+                        style="margin-top: 10px"
+                      >
+                        Face não cadastrada.
+                      </div>
+                    </div>
+                  </div>
+                  <input type="hidden" id="faceDescriptor" /><input
+                    type="hidden"
+                    id="faceImage"
+                  />
+                </div>
+                <div class="actions full">
+                  <button type="button" class="btn" onclick="closeForm()">
+                    Cancelar</button
+                  ><button class="btn primary">Salvar</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        <section class="page" id="sectors">
+          <div class="title">
+            <div>
+              <h1>Setores</h1>
+              <p>Cadastre e edite os tempos padrão de cada setor.</p>
+            </div>
+            <button class="btn primary" onclick="newSector()">
+              Novo setor
+            </button>
+          </div>
+          <div class="panel sector-form" id="sectorForm" style="display: none">
+            <div class="panel-head">Cadastro / edição do setor</div>
+            <div class="panel-body">
+              <form class="form" onsubmit="saveSector(event)">
+                <input type="hidden" id="sid" />
+                <div class="field">
+                  <label>Nome do setor</label><input id="sname" required />
+                </div>
+                <div class="field">
+                  <label>Tempo de trabalho até liberar a pausa (min)</label
+                  ><input
+                    id="swork"
+                    type="number"
+                    min="1"
+                    max="1440"
+                    value="100"
+                    required
+                  />
+                </div>
+                <div class="field">
+                  <label>Duração padrão da pausa (min)</label
+                  ><input
+                    id="sbreak"
+                    type="number"
+                    min="1"
+                    max="1440"
+                    value="20"
+                    required
+                  />
+                </div>
+                <div class="actions full">
+                  <button type="button" class="btn" onclick="closeSectorForm()">
+                    Cancelar</button
+                  ><button class="btn primary">Salvar setor</button>
+                </div>
+              </form>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-body">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Setor</th>
+                    <th>Tempo até pausa</th>
+                    <th>Duração da pausa</th>
+                    <th>Funcionários</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="sectorTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section class="page" id="monitor">
+          <div class="title">
+            <div>
+              <h1>Monitoramento</h1>
+              <p>Quem está trabalhando, em pausa ou com retorno pendente.</p>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-body">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Funcionário</th>
+                    <th>Setor</th>
+                    <th>Entrada</th>
+                    <th>Tempo de pausa</th>
+                    <th>Situação</th>
+                    <th>Contagem regressiva</th>
+                  </tr>
+                </thead>
+                <tbody id="monitorTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section class="page" id="justifications">
+          <div class="title">
+            <div>
+              <h1>Justificativas</h1>
+              <p>Registre a análise de uma ocorrência.</p>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-body">
+              <form class="form" onsubmit="addJustification(event)">
+                <div class="field">
+                  <label>Funcionário</label
+                  ><select id="jworker"></select>
+                </div>
+                <div class="field">
+                  <label>Tipo</label
+                  ><select id="jtype">
+                    <option>Atraso no retorno</option>
+                    <option>Pausa não registrada</option>
+                    <option>Outro</option>
+                  </select>
+                </div>
+                <div class="field full">
+                  <label>Descrição</label
+                  ><textarea id="jtext" rows="4" required></textarea>
+                </div>
+                <div class="actions full">
+                  <button class="btn primary">Salvar justificativa</button>
+                </div>
+              </form>
+              <hr
+                style="
+                  border: 0;
+                  border-top: 1px solid var(--border);
+                  margin: 20px 0;
+                "
+              />
+              <table>
+                <thead>
+                  <tr>
+                    <th>Data</th>
+                    <th>Funcionário</th>
+                    <th>Tipo</th>
+                    <th>Descrição</th>
+                  </tr>
+                </thead>
+                <tbody id="justTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section class="page" id="users">
+          <div class="title">
+            <div>
+              <h1>Usuários do sistema</h1>
+              <p>Somente o Administrador pode criar e administrar contas.</p>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-body">
+              <form class="form" onsubmit="saveUser(event)">
+                <input type="hidden" id="uid" />
+                <div class="field">
+                  <label>Nome</label><input id="uname" required />
+                </div>
+                <div class="field">
+                  <label>E-mail</label
+                  ><input id="uemail" type="email" required />
+                </div>
+                <div class="field">
+                  <label>Perfil</label
+                  ><select id="uprofile">
+                    <option>Gerente</option>
+                    <option>Administrador</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label>Senha</label
+                  ><input
+                    id="upassword"
+                    type="password"
+                    placeholder="Obrigatória no novo cadastro"
+                  />
+                </div>
+                <div class="field">
+                  <label>Status</label
+                  ><select id="ustatus">
+                    <option>Ativo</option>
+                    <option>Inativo</option>
+                  </select>
+                </div>
+                <div class="actions full">
+                  <button class="btn primary">Salvar usuário</button
+                  ><button type="button" class="btn" onclick="clearUserForm()">
+                    Limpar
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+          <div class="panel" style="margin-top: 16px">
+            <div class="panel-body">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Nome</th>
+                    <th>E-mail</th>
+                    <th>Perfil</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="userTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section class="page" id="reports">
+          <div class="title">
+            <div>
+              <h1>Relatórios</h1>
+              <p>Exporte os registros para análise.</p>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-body">
+              <div class="toolbar">
+                <button class="btn primary" onclick="downloadCSV()">
+                  Baixar CSV</button
+                ><button class="btn" onclick="downloadJSON()">
+                  Baixar JSON</button
+                ><button class="btn" onclick="window.print()">Imprimir</button>
+              </div>
+              <div class="notice">
+                O relatório inclui funcionário, setor, entrada, início da pausa,
+                retorno, situação e justificativas quando disponíveis.
+              </div>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Funcionário</th>
+                    <th>Setor</th>
+                    <th>Entrada</th>
+                    <th>Pausa</th>
+                    <th>Início</th>
+                    <th>Retorno</th>
+                    <th>Duração</th>
+                    <th>Cumprimento</th>
+                  </tr>
+                </thead>
+                <tbody id="reportTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api/dist/face-api.js"></script>
+    <script>
+      const API = "/api";
+      let db = {
+        workers: [],
+        sectors: [],
+        records: {},
+        justifications: [],
+        reports: [],
+      };
+      let faceModelsReady = false,
+        enrollStream = null;
+      const $ = (id) => document.getElementById(id);
+      async function api(path, opts = {}) {
+        const r = await fetch(API + path, {
+          headers: {
+            "Content-Type": "application/json",
+            ...(opts.headers || {}),
+          },
+          ...opts,
+        });
+        const j = await r.json();
+        if (!r.ok) throw new Error(j.error || "Erro no servidor");
+        return j;
+      }
+      function fmt(s) {
+        s = Math.max(0, Math.floor(s));
+        return (
+          String(Math.floor(s / 60)).padStart(2, "0") +
+          ":" +
+          String(s % 60).padStart(2, "0")
+        );
+      }
+      function esc(v) {
+        return String(v ?? "").replace(
+          /[&<>"']/g,
+          (m) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            })[m],
+        );
+      }
+      async function load() {
+        try {
+          db = await api("/state");
+          try {
+            db.reports = await api("/reports/json");
+          } catch (_) {}
+          render();
+        } catch (e) {
+          if (e.message.includes("Sessão administrativa"))
+            location.href = "/login";
+          else alert(e.message);
+        }
+      }
+      async function logoutAdmin() {
+        try {
+          await fetch("/api/auth/logout", { method: "POST" });
+        } finally {
+          location.href = "/login";
+        }
+      }
+      async function loadUsers() {
+        if (db.user?.profile !== "Administrador") return;
+        try {
+          const x = await api("/users");
+          db.users = x.users;
+          renderUsers();
+        } catch (e) {
+          alert(e.message);
+        }
+      }
+      function renderUsers() {
+        const t = $("userTable");
+        if (!t) return;
+        t.innerHTML =
+          (db.users || [])
+            .map(
+              (u) =>
+                `<tr><td>${esc(u.name)}</td><td>${esc(u.email)}</td><td><span class="badge ${u.profile === "Administrador" ? "b" : "g"}">${esc(u.profile)}</span></td><td>${esc(u.status)}</td><td><button class="btn" onclick="editUser(${u.id})">Editar</button><button class="btn danger" onclick="deleteUser(${u.id})">Excluir</button></td></tr>`,
+            )
+            .join("") ||
+          '<tr><td colspan="5" class="empty">Nenhum usuário.</td></tr>';
+      }
+      function clearUserForm() {
+        ["uid", "uname", "uemail", "upassword"].forEach(
+          (x) => ($(x).value = ""),
+        );
+        $("uprofile").value = "Gerente";
+        $("ustatus").value = "Ativo";
+      }
+      function editUser(id) {
+        const u = (db.users || []).find((x) => x.id === id);
+        if (!u) return;
+        $("uid").value = u.id;
+        $("uname").value = u.name;
+        $("uemail").value = u.email;
+        $("uprofile").value = u.profile;
+        $("ustatus").value = u.status;
+        $("upassword").value = "";
+        document.querySelector('[data-page="users"]').click();
+      }
+      async function saveUser(e) {
+        e.preventDefault();
+        try {
+          const b = {
+            name: $("uname").value.trim(),
+            email: $("uemail").value.trim(),
+            profile: $("uprofile").value,
+            password: $("upassword").value,
+            status: $("ustatus").value,
+          };
+          if (!$("uid").value && !b.password)
+            throw Error("Informe uma senha para o novo usuário.");
+          const url = $("uid").value ? "/users/" + $("uid").value : "/users";
+          await api(url, {
+            method: $("uid").value ? "PUT" : "POST",
+            body: JSON.stringify(b),
+          });
+          clearUserForm();
+          await loadUsers();
+          alert("Usuário salvo no banco de dados.");
+        } catch (e) {
+          alert(e.message);
+        }
+      }
+      async function deleteUser(id) {
+        if (!confirm("Excluir este usuário?")) return;
+        try {
+          await api("/users/" + id, { method: "DELETE" });
+          await loadUsers();
+        } catch (e) {
+          alert(e.message);
+        }
+      }
+      function applyRole() {
+        const admin = db.user?.profile === "Administrador";
+        document
+          .querySelectorAll("[data-admin-only]")
+          .forEach((x) => (x.style.display = admin ? "" : "none"));
+        if (!admin && document.querySelector("#users.active")) {
+          document.querySelector('[data-page="dashboard"]').click();
+        }
+      }
+      function render() {
+        renderEmployees();
+        renderSectors();
+        renderMonitor();
+        renderJust();
+        renderReports();
+        renderDash();
+        fillWorkerSelect();
+        fillSectorSelect();
+        applyRole();
+        loadUsers();
+      }
+      function state(w) {
+        const r = db.records[w.id];
+        if (!r || !r.active) return ["Fora", "b", "—", "Sem jornada ativa"];
+        if (r.paused) {
+          const sec = Math.max(0, (Date.now() - new Date(r.pauseStart)) / 1000),
+            limit = (w.breakMinutes || 20) * 60,
+            remaining = Math.max(0, limit - sec);
+          return [
+            sec >= limit ? "Retorno pendente" : "Em pausa",
+            sec >= limit ? "r" : "y",
+            fmt(remaining),
+            sec >= limit
+              ? "Tempo excedido — retorno pendente"
+              : "Tempo para voltar ao trabalho",
+          ];
+        }
+        const base = r.lastBreakEnd || r.entry;
+        const elapsed = Math.max(0, (Date.now() - new Date(base)) / 1000),
+          limit = (w.workMinutes || 100) * 60,
+          remaining = Math.max(0, limit - elapsed);
+        return [
+          remaining <= 0 ? "Pausa pendente" : "Trabalhando",
+          remaining <= 0 ? "r" : "g",
+          fmt(remaining),
+          remaining <= 0 ? "Pausa liberada" : "Tempo até liberar a pausa",
+        ];
+      }
+      function renderEmployees() {
+        $("employeeTable").innerHTML =
+          db.workers
+            .map(
+              (w) =>
+                `<tr><td><b>${esc(w.name)}</b></td><td>${esc(w.cpf) || "—"}</td><td>${esc(w.sector)}</td><td>${w.breakMinutes || 20} min</td><td><span class="badge ${w.status === "Ativo" ? "g" : "r"}">${esc(w.status)}</span></td><td><span class="badge ${w.faceDescriptor ? "g" : "y"}">${w.faceDescriptor ? "Cadastrada" : "Pendente"}</span></td><td><div class="table-actions"><button class="btn" onclick="editEmployee('${w.id}')">Editar</button><button class="btn danger" onclick="deleteEmployee('${w.id}')">Excluir</button></div></td></tr>`,
+            )
+            .join("") ||
+          '<tr><td colspan="7" class="empty">Nenhum funcionário.</td></tr>';
+      }
+      function renderSectors() {
+        $("sectorTable").innerHTML =
+          db.sectors
+            .map(
+              (s) =>
+                `<tr><td><b>${esc(s.name)}</b></td><td>${s.work} min</td><td>${s.breakMinutes || 20} min</td><td>${db.workers.filter((w) => w.sectorId === s.id).length}</td><td><div class="table-actions"><button class="btn" onclick="editSector(${s.id})">Editar</button><button class="btn danger" onclick="deleteSector(${s.id})">Excluir</button></div></td></tr>`,
+            )
+            .join("") ||
+          '<tr><td colspan="5" class="empty">Nenhum setor cadastrado.</td></tr>';
+      }
+      function renderMonitor() {
+        $("monitorTable").innerHTML =
+          db.workers
+            .map((w) => {
+              let x = state(w),
+                r = db.records[w.id],
+                tone = x[1] === "r" ? "danger" : x[1] === "y" ? "warn" : "ok";
+              return `<tr><td class="countdown-cell"><div class="countdown-top">${esc(x[3])}</div><div><b>${esc(w.name)}</b></div></td><td>${esc(w.sector)}</td><td>${r?.entry ? new Date(r.entry).toLocaleString("pt-BR") : "—"}</td><td>${w.breakMinutes || 20} min</td><td><span class="badge ${x[1]}">${x[0]}</span></td><td><span class="countdown ${tone}">${x[2]}</span></td></tr>`;
+            })
+            .join("") ||
+          '<tr><td colspan="6" class="empty">Nenhum funcionário cadastrado.</td></tr>';
+      }
+      function renderDash() {
+        if (db.user)
+          $("currentUser").textContent = db.user.name + " • " + db.user.profile;
+        let states = db.workers.map(state),
+          active = db.workers.filter((w) => w.status === "Ativo").length,
+          working = states.filter((x) => x[0] === "Trabalhando").length,
+          paused = states.filter((x) => x[0] === "Em pausa").length,
+          pending = states.filter(
+            (x) => x[0] === "Pausa pendente" || x[0] === "Retorno pendente",
+          ).length;
+        $("mActive").textContent = active;
+        $("mWorking").textContent = working;
+        $("mPaused").textContent = paused;
+        $("mPending").textContent = pending;
+        $("sectorChart").innerHTML =
+          '<div class="chart">' +
+          db.sectors
+            .map((s) => {
+              let n = db.workers
+                .filter((w) => w.sectorId === s.id)
+                .filter((w) => state(w)[0] === "Trabalhando").length;
+              let h = Math.max(8, n * 45);
+              return `<div class="bar" style="height:${h}px"><span>${n}</span><label>${esc(s.name)}</label></div>`;
+            })
+            .join("") +
+          "</div>";
+        $("alerts").innerHTML = pending
+          ? `<div class="notice"><b>${pending} alerta(s).</b><br>Há trabalhador aguardando pausa ou retorno.</div>`
+          : '<div class="empty">Nenhum alerta pendente.</div>';
+      }
+      function fillSectorSelect() {
+        const current = $("esector").value;
+        $("esector").innerHTML = db.sectors
+          .map(
+            (s) =>
+              `<option value="${s.id}">${esc(s.name)} — ${s.work} min / pausa ${s.breakMinutes || 20} min</option>`,
+          )
+          .join("");
+        if (current) $("esector").value = current;
+      }
+      function fillWorkerSelect() {
+        $("jworker").innerHTML = db.workers
+          .map((w) => `<option value="${w.id}">${esc(w.name)}</option>`)
+          .join("");
+      }
+      function onlyLettersInput(el) {
+        el.value = el.value
+          .replace(/[^A-Za-zÀ-ÖØ-öø-ÿ '-]/g, "")
+          .replace(/\s{2,}/g, " ");
+      }
+      function normalizeNameClient(v) {
+        return v
+          .trim()
+          .replace(/\s+/g, " ")
+          .split(" ")
+          .map((p) =>
+            p
+              ? p.charAt(0).toLocaleUpperCase("pt-BR") +
+                p.slice(1).toLocaleLowerCase("pt-BR")
+              : "",
+          )
+          .join(" ");
+      }
+      function validCPFClient(v) {
+        const c = v.replace(/\D/g, "");
+        if (!/^\d{11}$/.test(c) || /^([0-9])\1+$/.test(c)) return false;
+        let s = 0;
+        for (let i = 0; i < 9; i++) s += +c[i] * (10 - i);
+        let d = (s * 10) % 11;
+        if (d === 10) d = 0;
+        if (d !== +c[9]) return false;
+        s = 0;
+        for (let i = 0; i < 10; i++) s += +c[i] * (11 - i);
+        d = (s * 10) % 11;
+        if (d === 10) d = 0;
+        return d === +c[10];
+      }
+      function maskCPF(v) {
+        let d = v.replace(/\D/g, "").slice(0, 11);
+        if (d.length <= 3) return d;
+        if (d.length <= 6) return d.slice(0, 3) + "." + d.slice(3);
+        if (d.length <= 9)
+          return d.slice(0, 3) + "." + d.slice(3, 6) + "." + d.slice(6);
+        return (
+          d.slice(0, 3) +
+          "." +
+          d.slice(3, 6) +
+          "." +
+          d.slice(6, 9) +
+          "-" +
+          d.slice(9)
+        );
+      }
+      function applySectorDefaults() {
+        const s = db.sectors.find(
+          (x) => String(x.id) === String($("esector").value),
+        );
+        if (s) {
+          $("ework").value = s.work || 100;
+          $("ebreak").value = s.breakMinutes || 20;
+        }
+      }
+      function newEmployee() {
+        $("employeeForm").style.display = "block";
+        ["eid", "ename", "ecpf", "faceDescriptor", "faceImage"].forEach(
+          (x) => ($(x).value = ""),
+        );
+        $("eactivity").value = "Produção";
+        $("eshift").value = "08:00";
+        $("estatus").value = "Ativo";
+        $("facePreview").textContent = "Nenhuma captura";
+        $("faceCaptureStatus").textContent = "Face não cadastrada.";
+        $("captureFaceBtn").disabled = true;
+        fillSectorSelect();
+        applySectorDefaults();
+      }
+      function editEmployee(id) {
+        let w = db.workers.find((x) => x.id === id);
+        $("employeeForm").style.display = "block";
+        $("eid").value = w.id;
+        $("ename").value = w.name;
+        $("ecpf").value = maskCPF(w.cpf || "");
+        $("esector").value = w.sectorId;
+        $("eactivity").value = w.activity || "Produção";
+        $("eshift").value = w.shift || "08:00";
+        $("ework").value = w.workMinutes || 100;
+        $("ebreak").value = w.breakMinutes || 20;
+        $("estatus").value = w.status || "Ativo";
+        $("faceDescriptor").value = w.faceDescriptor
+          ? JSON.stringify(w.faceDescriptor)
+          : "";
+        $("faceImage").value = w.faceImage || "";
+        $("facePreview").innerHTML = w.faceImage
+          ? `<img src="${w.faceImage}" alt="Rosto cadastrado">`
+          : w.faceDescriptor
+            ? "Face cadastrada no banco"
+            : "Nenhuma captura";
+        $("faceCaptureStatus").textContent = w.faceDescriptor
+          ? "Face cadastrada. Você pode recapturar."
+          : "Face não cadastrada.";
+      }
+      function closeForm() {
+        $("employeeForm").style.display = "none";
+        stopEnrollCamera();
+      }
+      async function saveEmployee(e) {
+        e.preventDefault();
+        try {
+          onlyLettersInput($("ename"));
+          $("ename").value = normalizeNameClient($("ename").value);
+          $("ecpf").value = maskCPF($("ecpf").value);
+          const cpf = $("ecpf").value.replace(/\D/g, "");
+          const name = $("ename").value.trim();
+          if (!name) throw Error("Informe o nome.");
+          if (!/^[A-Za-zÀ-ÖØ-öø-ÿ]+(?:[ '-][A-Za-zÀ-ÖØ-öø-ÿ]+)*$/.test(name))
+            throw Error("O nome deve conter somente letras e espaços.");
+          if (!validCPFClient(cpf))
+            throw Error("CPF inválido. Confira os dígitos.");
+          if (!$("faceDescriptor").value)
+            throw Error(
+              "Faça o cadastro facial antes de salvar o funcionário.",
+            );
+          const payload = {
+            name,
+            cpf,
+            sectorId: $("esector").value,
+            activity: $("eactivity").value.trim(),
+            shift: $("eshift").value,
+            workMinutes: Number($("ework").value) || 100,
+            breakMinutes: Number($("ebreak").value) || 20,
+            status: $("estatus").value,
+            faceDescriptor: JSON.parse($("faceDescriptor").value),
+            faceImage: $("faceImage").value || null,
+          };
+          const id = $("eid").value;
+          if (id)
+            await api("/employees/" + id, {
+              method: "PUT",
+              body: JSON.stringify(payload),
+            });
+          else
+            await api("/employees", {
+              method: "POST",
+              body: JSON.stringify(payload),
+            });
+          toast("Funcionário salvo no banco de dados.");
+          closeForm();
+          await load();
+        } catch (e) {
+          alert(e.message);
+        }
+      }
+      async function deleteEmployee(id) {
+        if (!confirm("Excluir este funcionário e seus registros?")) return;
+        try {
+          await api("/employees/" + id, { method: "DELETE" });
+          await load();
+        } catch (e) {
+          alert(e.message);
+        }
+      }
+      function newSector() {
+        $("sectorForm").style.display = "block";
+        $("sid").value = "";
+        $("sname").value = "";
+        $("swork").value = "100";
+        $("sbreak").value = "20";
+        $("sname").focus();
+      }
+      function editSector(id) {
+        const s = db.sectors.find((x) => x.id === id);
+        if (!s) return;
+        $("sid").value = s.id;
+        $("sname").value = s.name;
+        $("swork").value = s.work || 100;
+        $("sbreak").value = s.breakMinutes || 20;
+        $("sectorForm").style.display = "block";
+        $("sname").focus();
+      }
+      function closeSectorForm() {
+        $("sectorForm").style.display = "none";
+      }
+      async function saveSector(e) {
+        e.preventDefault();
+        try {
+          const b = {
+            name: $("sname").value.trim(),
+            work: Number($("swork").value),
+            breakMinutes: Number($("sbreak").value),
+          };
+          if (!b.name) throw Error("Informe o nome do setor.");
+          if (b.work < 1 || b.breakMinutes < 1)
+            throw Error("Os tempos devem ser maiores que zero.");
+          const id = $("sid").value;
+          await api(id ? "/sectors/" + id : "/sectors", {
+            method: id ? "PUT" : "POST",
+            body: JSON.stringify(b),
+          });
+          closeSectorForm();
+          await load();
+          alert("Setor salvo no banco de dados.");
+        } catch (e) {
+          alert(e.message);
+        }
+      }
+      async function deleteSector(id) {
+        const s = db.sectors.find((x) => x.id === id);
+        if (!s) return;
+        if (!confirm("Excluir o setor " + s.name + "?")) return;
+        try {
+          await api("/sectors/" + id, { method: "DELETE" });
+          await load();
+        } catch (e) {
+          alert(e.message);
+        }
+      }
+      async function addJustification(e) {
+        e.preventDefault();
+        try {
+          await api("/justifications", {
+            method: "POST",
+            body: JSON.stringify({
+              employeeId: $("jworker").value,
+              type: $("jtype").value,
+              text: $("jtext").value,
+            }),
+          });
+          $("jtext").value = "";
+          await load();
+        } catch (e) {
+          alert(e.message);
+        }
+      }
+      function renderJust() {
+        $("justTable").innerHTML = db.justifications.length
+          ? db.justifications
+              .slice()
+              .reverse()
+              .map(
+                (j) =>
+                  `<tr><td>${new Date(j.date).toLocaleString("pt-BR")}</td><td>${esc(j.workerName)}</td><td>${esc(j.type)}</td><td>${esc(j.text)}</td></tr>`,
+              )
+              .join("")
+          : '<tr><td colspan="4" class="empty">Nenhuma justificativa.</td></tr>';
+      }
+      function renderReports() {
+        const rows = db.reports || [];
+        $("reportTable").innerHTML = rows.length
+          ? rows
+              .map(
+                (r) =>
+                  `<tr><td>${esc(r.employee)}</td><td>${esc(r.sector)}</td><td>${r.entry ? new Date(r.entry).toLocaleString("pt-BR") : "—"}</td><td>Pausa ${r.sequence}</td><td>${r.pause_start ? new Date(r.pause_start).toLocaleString("pt-BR") : "—"}</td><td>${r.return_at ? new Date(r.return_at).toLocaleString("pt-BR") : "—"}</td><td>${r.duration_seconds == null ? "Em andamento" : Math.round(r.duration_seconds / 60) + " min"}</td><td>${esc(r.compliance || "Em andamento")}</td></tr>`,
+              )
+              .join("")
+          : '<tr><td colspan="8" class="empty">Nenhuma pausa registrada ainda.</td></tr>';
+      }
+      function downloadCSV() {
+        window.location = "/api/reports/csv";
+      }
+      function downloadJSON() {
+        window.location = "/api/reports/json";
+      }
+      function toast(t) {
+        const x = document.createElement("div");
+        x.className = "notice";
+        x.textContent = t;
+        document.querySelector("#employeeForm .panel-body").prepend(x);
+        setTimeout(() => x.remove(), 2200);
+      }
+      async function loadModels() {
+        try {
+          await Promise.all([
+            faceapi.nets.tinyFaceDetector.loadFromUri(
+              "https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model",
+            ),
+            faceapi.nets.faceLandmark68TinyNet.loadFromUri(
+              "https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model",
+            ),
+            faceapi.nets.faceRecognitionNet.loadFromUri(
+              "https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model",
+            ),
+          ]);
+          faceModelsReady = true;
+        } catch (e) {
+          console.error(e);
+          $("faceCaptureStatus").textContent =
+            "Não foi possível carregar o modelo facial. Verifique a internet.";
+        }
+      }
+      async function startEnrollCamera() {
+        try {
+          if (!faceModelsReady) await loadModels();
+          enrollStream = await navigator.mediaDevices.getUserMedia({
+            video: {
+              facingMode: "user",
+              width: { ideal: 720 },
+              height: { ideal: 720 },
+            },
+            audio: false,
+          });
+          $("faceVideo").srcObject = enrollStream;
+          $("captureFaceBtn").disabled = false;
+          $("faceCaptureStatus").textContent =
+            "Câmera ativa. Centralize um único rosto.";
+        } catch (e) {
+          alert("Permita o acesso à câmera.");
+        }
+      }
+      function stopEnrollCamera() {
+        if (enrollStream) {
+          enrollStream.getTracks().forEach((t) => t.stop());
+          enrollStream = null;
+        }
+      }
+      async function captureEnrollmentFace() {
+        try {
+          const v = $("faceVideo");
+          const all = await faceapi.detectAllFaces(
+            v,
+            new faceapi.TinyFaceDetectorOptions({
+              inputSize: 320,
+              scoreThreshold: 0.65,
+            }),
+          );
+          if (all.length !== 1) {
+            $("faceCaptureStatus").textContent = all.length
+              ? "Há mais de um rosto. Deixe somente uma pessoa diante da câmera."
+              : "Nenhum rosto detectado. Aproxime e centralize.";
+            return;
+          }
+          const det = await faceapi
+            .detectSingleFace(
+              v,
+              new faceapi.TinyFaceDetectorOptions({
+                inputSize: 320,
+                scoreThreshold: 0.65,
+              }),
+            )
+            .withFaceLandmarks(true)
+            .withFaceDescriptor();
+          if (!det) return;
+          const box = det.detection.box;
+          const margin = 0.28;
+          let sx = Math.max(0, box.x - box.width * margin),
+            sy = Math.max(0, box.y - box.height * margin),
+            ex = Math.min(v.videoWidth, box.x + box.width * (1 + margin)),
+            ey = Math.min(v.videoHeight, box.y + box.height * (1 + margin));
+          let sw = ex - sx,
+            sh = ey - sy;
+          const aspect = 0.78;
+          const targetW = sh * aspect;
+          if (targetW > sw) {
+            const extra = (targetW - sw) / 2;
+            sx = Math.max(0, sx - extra);
+            ex = Math.min(v.videoWidth, ex + extra);
+          } else {
+            const targetH = sw / aspect;
+            const extra = (targetH - sh) / 2;
+            sy = Math.max(0, sy - extra);
+            ey = Math.min(v.videoHeight, ey + extra);
+          }
+          sw = ex - sx;
+          sh = ey - sy;
+          const c = document.createElement("canvas");
+          c.width = 390;
+          c.height = Math.round(390 / aspect);
+          const ctx = c.getContext("2d");
+          ctx.imageSmoothingEnabled = true;
+          ctx.imageSmoothingQuality = "high";
+          ctx.fillStyle = "#101827";
+          ctx.fillRect(0, 0, c.width, c.height);
+          const scale = Math.min(c.width / sw, c.height / sh);
+          const dw = sw * scale,
+            dh = sh * scale;
+          ctx.drawImage(
+            v,
+            sx,
+            sy,
+            sw,
+            sh,
+            (c.width - dw) / 2,
+            (c.height - dh) / 2,
+            dw,
+            dh,
+          );
+          const image = c.toDataURL("image/jpeg", 0.92);
+          $("facePreview").innerHTML =
+            `<img src="${image}" alt="Face capturada">`;
+          $("faceDescriptor").value = JSON.stringify(
+            Array.from(det.descriptor),
+          );
+          $("faceImage").value = image;
+          $("faceCaptureStatus").textContent =
+            "Face capturada sem deformação. O recorte preserva a proporção e será salvo junto ao descritor facial.";
+          toast("Face capturada com sucesso.");
+        } catch (e) {
+          console.error(e);
+          alert("Não foi possível capturar a face.");
+        }
+      }
+      $("esector").addEventListener("change", () => {
+        if (!$("eid").value) applySectorDefaults();
+      });
+      $("ename").addEventListener("input", () => onlyLettersInput($("ename")));
+      $("ename").addEventListener("blur", () => {
+        $("ename").value = normalizeNameClient($("ename").value);
+      });
+      $("ecpf").addEventListener("input", () => {
+        $("ecpf").value = maskCPF($("ecpf").value);
+        const digits = $("ecpf").value.replace(/\D/g, "");
+        $("ecpf").style.borderColor =
+          digits.length === 11
+            ? validCPFClient(digits)
+              ? "#21854b"
+              : "#b43a3a"
+            : "";
+      });
+      document.querySelectorAll("aside button").forEach(
+        (b) =>
+          (b.onclick = () => {
+            document
+              .querySelectorAll("aside button")
+              .forEach((x) => x.classList.remove("active"));
+            b.classList.add("active");
+            document
+              .querySelectorAll(".page")
+              .forEach((p) => p.classList.remove("active"));
+            $(b.dataset.page).classList.add("active");
+            render();
+          }),
+      );
+      setInterval(() => {
+        $("clock").textContent = new Date().toLocaleTimeString("pt-BR");
+        renderMonitor();
+        renderDash();
+      }, 1000);
+      load();
+      loadModels();
+    </script>
+  </body>
+</html>
