@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>FaceBreak — Login</title>
+    <style>
+      :root {
+        --bg: #f4f6f8;
+        --surface: #fff;
+        --text: #17212b;
+        --muted: #66717d;
+        --border: #dfe4e8;
+        --blue: #2457a6;
+        --red: #b43a3a;
+        --shadow: 0 18px 45px rgba(20, 35, 50, 0.09);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: var(--bg);
+        color: var(--text);
+        font:
+          14px Arial,
+          Helvetica,
+          sans-serif;
+        display: grid;
+        place-items: center;
+      }
+      .login {
+        width: min(430px, calc(100% - 32px));
+        background: var(--surface);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+        padding: 34px;
+        border-radius: 8px;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 28px;
+      }
+      .mark {
+        width: 42px;
+        height: 42px;
+        background: #1f4f91;
+        color: #fff;
+        display: grid;
+        place-items: center;
+        font-weight: 700;
+        border-radius: 6px;
+      }
+      .brand b {
+        display: block;
+        font-size: 18px;
+      }
+      .brand small {
+        color: var(--muted);
+        display: block;
+        margin-top: 4px;
+      }
+      .title {
+        margin-bottom: 22px;
+      }
+      .title h1 {
+        font-size: 25px;
+        margin: 0;
+      }
+      .title p {
+        color: var(--muted);
+        margin: 7px 0 0;
+      }
+      .field {
+        display: grid;
+        gap: 6px;
+        margin-bottom: 15px;
+      }
+      .field label {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--muted);
+      }
+      .field input {
+        width: 100%;
+        border: 1px solid var(--border);
+        padding: 11px;
+        border-radius: 5px;
+        outline: none;
+      }
+      .field input:focus {
+        border-color: #2457a6;
+        box-shadow: 0 0 0 2px rgba(36, 87, 166, 0.08);
+      }
+      button {
+        width: 100%;
+        border: 1px solid var(--blue);
+        background: var(--blue);
+        color: #fff;
+        padding: 11px 14px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: 700;
+      }
+      .error {
+        display: none;
+        background: #f9e6e6;
+        color: #913030;
+        border: 1px solid #e8caca;
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 15px;
+      }
+      .hint {
+        margin-top: 18px;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.5;
+      }
+      /* Visual estilo Power BI (igual ao painel) */
+      :root {
+        --bg: #f3f2f1;
+        --surface: #fff;
+        --text: #252423;
+        --muted: #605e5c;
+        --border: #e1dfdd;
+        --blue: #0b6fcc;
+        --red: #a4262c;
+        --shadow: 0 1.6px 3.6px rgba(0, 0, 0, 0.13),
+          0 0.3px 0.9px rgba(0, 0, 0, 0.1);
+      }
+      body {
+        font:
+          14px "Segoe UI",
+          "Segoe UI Web",
+          system-ui,
+          -apple-system,
+          Roboto,
+          sans-serif;
+      }
+      :focus-visible {
+        outline: 2px solid #118dff;
+        outline-offset: 1px;
+      }
+      .login {
+        border-radius: 2px;
+        border-top: 4px solid #f2c811;
+      }
+      .mark {
+        background: #f2c811;
+        color: #252423;
+        border-radius: 2px;
+        font-weight: 800;
+      }
+      .title h1 {
+        font-weight: 600;
+        font-size: 22px;
+      }
+      .field input {
+        border: 1px solid #8a8886;
+        border-radius: 2px;
+      }
+      .field input:focus {
+        border-color: #118dff;
+        box-shadow: 0 0 0 1px #118dff;
+      }
+      button {
+        background: #f2c811;
+        border: 1px solid #f2c811;
+        color: #252423;
+        border-radius: 2px;
+      }
+      button:hover {
+        background: #e6bc00;
+      }
+      .error {
+        background: #fde3e2;
+        color: #a4262c;
+        border: 1px solid #f4b6b8;
+        border-radius: 2px;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="login">
+      <div class="title">
+        <h1>Entrar no sistema</h1>
+      </div>
+      <div id="error" class="error"></div>
+      <form id="loginForm">
+        <div class="field">
+          <label>E-mail</label
+          ><input
+            id="email"
+            type="email"
+            autocomplete="username"
+            placeholder="seu@email.com"
+            required
+          />
+        </div>
+        <div class="field">
+          <label>Senha</label
+          ><input
+            id="password"
+            type="password"
+            autocomplete="current-password"
+            placeholder="Digite sua senha"
+            required
+          />
+        </div>
+        <button id="submit" type="submit">Entrar</button>
+      </form>
+    </main>
+    <script>
+      const form = document.getElementById("loginForm"),
+        email = document.getElementById("email"),
+        password = document.getElementById("password"),
+        error = document.getElementById("error"),
+        submit = document.getElementById("submit");
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        error.style.display = "none";
+        submit.textContent = "Entrando...";
+        try {
+          const r = await fetch("/api/auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              email: email.value.trim(),
+              password: password.value,
+            }),
+          });
+          const j = await r.json();
+          if (!r.ok) throw Error(j.error || "Não foi possível entrar.");
+          location.href = "/manager.html";
+        } catch (err) {
+          error.textContent = err.message;
+          error.style.display = "block";
+          submit.textContent = "Entrar";
+        }
+      });
+    </script>
+  </body>
+</html>

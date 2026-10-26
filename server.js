@@ -10,7 +10,7 @@ const DBFILE = path.join(DATA, "facebreak.db");
 fs.mkdirSync(DATA, { recursive: true });
 let db;
 const terminalActionLocks = new Map();
-const IDENTIFICATION_COOLDOWN_MS = 120000;
+const IDENTIFICATION_COOLDOWN_MS = 30000;
 function createDb(SQL) {
   const bytes = fs.existsSync(DBFILE) ? fs.readFileSync(DBFILE) : null;
   return bytes ? new SQL.Database(bytes) : new SQL.Database();
@@ -304,7 +304,7 @@ init()
             (nowMs - Date.parse(c.break.start_at)) / 1000,
           );
           const remainingSeconds = limitSeconds - elapsedSeconds;
-          if (remainingSeconds <= -180) {
+          if (remainingSeconds <= 0) {
             db.prepare(
               "INSERT OR IGNORE INTO occurrences(employee_id,break_id,type,date) VALUES(?,?,?,?)",
             ).run(
@@ -342,6 +342,30 @@ init()
         }
       }
       res.json({ count: active.length, workers: active });
+    });
+    app.get("/api/alerts/recent", (req, res) => {
+      const nowMs = Date.now();
+      const since = new Date(nowMs - 15 * 60 * 1000).toISOString();
+      // Verifica pausas excedidas aqui também, mesmo que o terminal não esteja aberto.
+      const activePauses = db.prepare(
+        'SELECT e.id employeeId,e.break_minutes breakMinutes FROM employees e WHERE e.status="Ativo"'
+      ).all();
+      for (const employee of activePauses) {
+        const c = current(employee.employeeId);
+        if (c && c.break && !c.break.end_at) {
+          const elapsed = Math.floor((nowMs - Date.parse(c.break.start_at)) / 1000);
+          const allowed = Math.max(1, Number(employee.breakMinutes) || 20) * 60;
+          if (elapsed >= allowed) {
+            db.prepare(
+              "INSERT OR IGNORE INTO occurrences(employee_id,break_id,type,date) VALUES(?,?,?,?)",
+            ).run(employee.employeeId, c.break.id, "Excesso de pausa", new Date(nowMs).toISOString());
+          }
+        }
+      }
+      const alerts = db.prepare(
+        "SELECT o.id,e.name employee,s.name sector,o.date,o.type FROM occurrences o JOIN employees e ON e.id=o.employee_id JOIN sectors s ON s.id=e.sector_id WHERE o.type IN ('Tentativa de retorno durante a pausa','Excesso de pausa') AND o.date>? ORDER BY o.date DESC"
+      ).all(since);
+      res.json({ alerts });
     });
     app.get("/api/state", (req, res) => {
       const workers = db
@@ -778,6 +802,11 @@ init()
       const remainingMs = IDENTIFICATION_COOLDOWN_MS - (nowMs - lockedAt);
       if (lockedAt && remainingMs > 0) {
         const remainingSeconds = Math.ceil(remainingMs / 1000);
+        const c0 = current(id);
+        if (c0 && c0.break && !c0.break.end_at)
+          db.prepare(
+            "INSERT OR IGNORE INTO occurrences(employee_id,break_id,type,date) VALUES(?,?,?,?)",
+          ).run(id, c0.break.id, "Tentativa de retorno durante a pausa", new Date(nowMs).toISOString());
         return res
           .status(429)
           .json({
@@ -800,7 +829,7 @@ init()
           badge: "green-b",
           message: "Entrada registrada com sucesso.",
           sessionId: r.lastInsertRowid,
-          cooldownSeconds: 120,
+          cooldownSeconds: 30,
         });
       }
       if (c.break && !c.break.end_at) {
@@ -809,6 +838,19 @@ init()
           Math.floor((Date.parse(now) - Date.parse(c.break.start_at)) / 1000),
         );
         const min = Math.max(1, Number(c.break.minimum_seconds) || 1);
+        if (dur < min) {
+          db.prepare(
+            "INSERT OR IGNORE INTO occurrences(employee_id,break_id,type,date) VALUES(?,?,?,?)",
+          ).run(id, c.break.id, "Tentativa de retorno durante a pausa", now);
+          return res.json({
+            action: "blocked",
+            label: "Em pausa",
+            badge: "yellow-b",
+            message: "Retorno bloqueado: a pausa obrigatória ainda não terminou.",
+            remainingSeconds: min - dur,
+            minimumSeconds: min,
+          });
+        }
         let compliance = "Cumprida";
         if (dur < min) compliance = "Retorno muito cedo";
         else if (dur > min) compliance = "Retorno tardio";
@@ -830,10 +872,12 @@ init()
                 ? "red-b"
                 : "yellow-b",
           message: `Retorno registrado. ${compliance}.`,
+          pauseAlert: dur < min,
+          remainingSeconds: Math.max(0, min - dur),
           durationSeconds: dur,
           minimumSeconds: min,
           compliance,
-          cooldownSeconds: 120,
+          cooldownSeconds: 30,
         });
       }
       const lastBreak = db
@@ -888,7 +932,7 @@ init()
         message: `Pausa ${seq} iniciada. ${timing}. Tempo permitido: ${Math.max(1, Number(e.break_minutes) || 20)} minuto(s).`,
         sequence: seq,
         minimumSeconds: Math.max(1, Number(e.break_minutes) || 20) * 60,
-        cooldownSeconds: 120,
+        cooldownSeconds: 30,
       });
     });
     app.post(

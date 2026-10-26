@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FaceBreak — Terminal do Funcionário</title>
+<style>
+:root{color-scheme:light dark;--bg:light-dark(#eef4fb,#07111f);--surface:light-dark(#fff,#101b2d);--surface2:light-dark(#f4f7fb,#17243a);--text:light-dark(#172033,#eef5ff);--muted:light-dark(#667085,#9db0ca);--border:light-dark(#dfe6f0,#263752);--blue:#2563eb;--green:#16a34a;--yellow:#d97706;--red:#dc2626;--shadow:0 25px 70px rgba(15,23,42,.16)}*{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}button,input,select{font:inherit}.app{min-height:100vh;display:grid;grid-template-rows:auto 1fr}.top{padding:18px 28px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);background:var(--surface)}.brand{display:flex;align-items:center;gap:12px}.mark{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(135deg,#38bdf8,#2563eb);color:#fff;font-weight:900}.brand small{display:block;color:var(--muted);margin-top:2px}.clock{font-size:20px;font-weight:800}.main{width:min(1180px,100%);margin:auto;padding:32px 22px 48px}.hero{text-align:center;margin-bottom:26px}.hero h1{font-size:34px;margin:0;letter-spacing:-.04em}.hero p{color:var(--muted);margin:8px 0}.layout{display:grid;grid-template-columns:1.15fr .85fr;gap:18px}.card{background:var(--surface);border:1px solid var(--border);border-radius:20px;box-shadow:var(--shadow)}.head{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}.head h2{margin:0;font-size:17px}.body{padding:20px}.camera{height:480px;background:#0b1626;border-radius:16px;position:relative;overflow:hidden;display:grid;place-items:center}.camera video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}.placeholder{z-index:1;text-align:center;color:#8da2bd;padding:28px}.camera{outline:2px solid transparent;outline-offset:-2px;transition:outline-color .3s ease}.camera.active{outline-color:rgba(56,189,248,.55)}.camera.success{outline-color:rgba(34,197,94,.75)}.camera.warn{outline-color:rgba(245,158,11,.75)}.hint{position:absolute;z-index:3;left:0;right:0;bottom:0;text-align:center;padding:34px 16px 16px;background:linear-gradient(to top,rgba(0,0,0,.55),transparent);font-size:13px;font-weight:500;color:#fff}.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.btn{border:1px solid var(--border);background:var(--surface);color:var(--text);padding:13px 14px;border-radius:11px;font-weight:750;cursor:pointer}.btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}.btn.green{background:var(--green);border-color:var(--green);color:#fff}.btn.red{background:var(--red);border-color:var(--red);color:#fff}.btn:disabled{opacity:.45;cursor:not-allowed}.field{display:grid;gap:7px;margin-bottom:14px}.field label{font-size:11px;font-weight:800;color:var(--muted)}select{width:100%;padding:13px;border:1px solid var(--border);border-radius:11px;background:var(--surface);color:var(--text)}.employee{display:flex;gap:12px;align-items:center;padding:14px;background:var(--surface2);border-radius:13px;margin-bottom:15px}.avatar{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:#dbeafe;color:#1d4ed8;font-weight:900}.employee strong{display:block}.employee span{font-size:11px;color:var(--muted)}.status{padding:14px;border-radius:13px;background:var(--surface2);margin-bottom:15px}.status-title{font-size:11px;color:var(--muted)}.status-value{font-size:24px;font-weight:900;margin-top:5px}.timer{font-size:44px;font-weight:900;letter-spacing:.04em;text-align:center;margin:14px 0}.progress{height:10px;border-radius:20px;background:var(--surface2);overflow:hidden}.progress i{display:block;height:100%;width:0;background:var(--blue);transition:width .3s}.event{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:12px}.event:last-child{border:0}.badge{padding:5px 9px;border-radius:999px;font-size:10px;font-weight:800}.blue{background:#dbeafe;color:#1e40af}.green-b{background:#dcfce7;color:#166534}.yellow-b{background:#fef3c7;color:#92400e}.red-b{background:#fee2e2;color:#991b1b}.notice{padding:13px;border-radius:12px;background:#eff6ff;color:#1e40af;font-size:11px;line-height:1.5;margin-bottom:15px}.corner-note{position:fixed;top:92px;right:20px;max-width:290px;padding:11px 14px;background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--yellow);border-radius:10px;box-shadow:0 10px 30px rgba(15,23,42,.14);opacity:0;transform:translateX(12px);pointer-events:none;transition:opacity .25s,transform .25s;z-index:80}.corner-note.show{opacity:1;transform:none}.corner-note strong{display:block;font-size:12px}.corner-note span{display:block;font-size:11px;color:var(--muted);margin-top:2px;line-height:1.4}@media(max-width:560px){.corner-note{top:76px;right:12px;left:12px;max-width:none}}.toast{position:fixed;right:20px;bottom:20px;background:#111827;color:#fff;padding:13px 16px;border-radius:11px;opacity:0;transform:translateY(10px);transition:.25s;z-index:80}.toast.show{opacity:1;transform:none}.auto-state{display:flex;align-items:center;gap:12px;margin-top:14px;padding:13px 15px;border:1px solid var(--border);background:var(--surface2);border-radius:13px}.auto-state strong{display:block;font-size:13px}.auto-state small{display:block;color:var(--muted);font-size:11px;margin-top:3px}.pulse{width:10px;height:10px;border-radius:50%;background:#94a3b8;box-shadow:0 0 0 0 rgba(37,99,235,.35)}.pulse.active{background:var(--blue);animation:pulse 1.4s infinite}.pulse.success{background:var(--green);animation:none}@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(37,99,235,.35)}70%{box-shadow:0 0 0 9px rgba(37,99,235,0)}100%{box-shadow:0 0 0 0 rgba(37,99,235,0)}}.auto-action{display:grid;gap:4px;margin-top:16px;padding:14px 15px;border-radius:13px;background:var(--surface2);border:1px solid var(--border)}.active-list{margin-top:18px;border-top:1px solid var(--border);padding-top:16px}.active-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}.active-head strong{font-size:13px}.active-count{font-size:11px;color:var(--muted)}.active-worker{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);font-size:11px}.active-worker:last-child{border-bottom:0}.active-name{font-weight:750}.active-sector{display:block;color:var(--muted);margin-top:2px}.active-status{white-space:nowrap;padding:4px 7px;border-radius:999px;font-size:9px;font-weight:800}.active-status.work{background:#dcfce7;color:#166534}.active-status.pause{background:#fef3c7;color:#92400e}.active-status.overdue{background:#fee2e2;color:#b91c1c}.active-timer{white-space:nowrap;min-width:74px;text-align:center;padding:6px 9px;border-radius:9px;background:#dcfce7;color:#166534;border:1px solid #86efac;font-size:12px;font-weight:900;font-variant-numeric:tabular-nums;letter-spacing:.02em}.active-timer.warning{background:#fef3c7;color:#92400e;border-color:#fcd34d}.active-timer.overdue{background:#fee2e2;color:#b91c1c;border-color:#fca5a5}.active-worker-right{display:flex;align-items:center;justify-content:flex-end;gap:8px}.empty-active{font-size:11px;color:var(--muted);padding:8px 0}.auto-action strong{font-size:13px}.auto-action span{font-size:11px;color:var(--muted);line-height:1.45}@media(max-width:900px){.layout{grid-template-columns:1fr}.camera{height:420px}}@media(max-width:560px){.top{padding:14px}.clock{font-size:15px}.main{padding:22px 12px}.hero h1{font-size:27px}.actions{grid-template-columns:1fr}.camera{height:360px}}
+.pause-alert{position:fixed;inset:0;z-index:50;display:none;place-items:center;background:rgba(230,0,0,.96);color:#fff;text-align:center;padding:24px}.pause-alert.show{display:grid;animation:pa-blink 1s infinite}.pause-alert div{max-width:620px}.pause-alert h2{font-size:44px;font-weight:900;text-shadow:0 2px 8px rgba(0,0,0,.4);margin:0 0 12px}.pause-alert p{font-size:20px;margin:6px 0}.pause-alert button{margin-top:22px;padding:12px 28px;background:#fff;color:#b00000;border:0;border-radius:10px;font-weight:800;cursor:pointer}@keyframes pa-blink{50%{background:rgba(120,0,0,.98)}}
+/* ===== Visual estilo Power BI (igual ao painel) ===== */
+:root{color-scheme:light;--bg:#f3f2f1;--surface:#fff;--surface2:#faf9f8;--text:#252423;--muted:#605e5c;--border:#e1dfdd;--blue:#0b6fcc;--green:#00857a;--yellow:#9a6b00;--red:#d13438;--shadow:0 1.6px 3.6px rgba(0,0,0,.13),0 .3px .9px rgba(0,0,0,.1)}
+body{font-family:"Segoe UI","Segoe UI Web",system-ui,-apple-system,Roboto,sans-serif}
+:focus-visible{outline:2px solid #118dff;outline-offset:1px}
+.top{background:#fff;border-bottom:1px solid var(--border)}
+.mark{background:#f2c811;color:#252423;border-radius:2px;font-weight:800}
+.clock{font-weight:600;font-variant-numeric:tabular-nums}
+.hero h1{font-size:26px;font-weight:600;letter-spacing:0}
+.card{border-radius:2px;box-shadow:var(--shadow)}
+.head{padding:12px 16px;background:#fff}
+.head h2{font-size:14px;font-weight:600}
+.body{padding:16px}
+.camera{background:#252423;border-radius:2px}
+.camera.active{outline-color:#118dff}
+.camera.success{outline-color:#01b8aa}
+.camera.warn{outline-color:#f2c811}
+.btn{border-radius:2px;border:1px solid #8a8886;font-weight:600}
+.btn.primary{background:#f2c811;border-color:#f2c811;color:#252423}
+select{border-radius:2px;border:1px solid #8a8886}
+.employee,.status,.auto-state,.auto-action{border-radius:2px;background:#faf9f8}
+.employee,.status{border:1px solid var(--border)}
+.avatar{background:#deecf9;color:#0b5a9c;font-weight:700}
+.status-value{font-weight:600}
+.progress{border-radius:2px}
+.progress i{background:#118dff}
+.badge{border-radius:2px;font-weight:600}
+.blue{background:#deecf9;color:#0b5a9c}
+.green-b{background:#d7f3f0;color:#00695f}
+.yellow-b{background:#fff1b8;color:#6b4e00}
+.red-b{background:#fde3e2;color:#a4262c}
+.notice{border-radius:2px;background:#deecf9;color:#0b5a9c}
+.corner-note{border-radius:2px;border-left-color:#f2c811;box-shadow:var(--shadow)}
+.toast{background:#252423;border-radius:2px}
+.pulse.active{background:#118dff}
+.pulse.success{background:#01b8aa}
+.active-list{border-top:1px solid var(--border)}
+.active-status{border-radius:2px;font-weight:600}
+.active-status.work{background:#d7f3f0;color:#00695f}
+.active-status.pause{background:#fff1b8;color:#6b4e00}
+.active-status.overdue{background:#fde3e2;color:#a4262c}
+.active-timer{border-radius:2px;font-weight:700;background:#d7f3f0;color:#00695f;border-color:#01b8aa}
+.active-timer.warning{background:#fff1b8;color:#6b4e00;border-color:#f2c811}
+.active-timer.overdue{background:#fde3e2;color:#a4262c;border-color:#f4b6b8}
+.pause-alert button{border-radius:2px;color:#a4262c}
+@media(prefers-reduced-motion:reduce){.pause-alert.show,.pulse.active{animation:none}}
+.app{grid-template-rows:1fr}
+.corner-note{top:20px}
+@media(max-width:560px){.corner-note{top:12px}}
+#pauseAlert{inset:auto;top:20px;right:20px;width:min(330px,calc(100% - 24px));padding:0;background:transparent;display:none;text-align:left;animation:none}
+#pauseAlert.show{display:block;animation:none}
+#pauseAlert .bubble{position:relative;max-width:none;background:#e60000;color:#fff;border:2px solid #8f0000;border-radius:8px;padding:12px 40px 12px 14px;box-shadow:0 10px 28px rgba(143,0,0,.45);animation:pa-pop .22s ease-out}
+#pauseAlert .bubble::after{content:"";position:absolute;top:-8px;right:22px;width:14px;height:14px;background:#e60000;border-left:2px solid #8f0000;border-top:2px solid #8f0000;transform:rotate(45deg)}
+#pauseAlert h2{font-size:14px;font-weight:700;margin:0 0 4px;text-shadow:none}
+#pauseAlert p{font-size:13px;line-height:1.35;margin:2px 0}
+#pauseAlert .close{position:absolute;top:6px;right:6px;width:26px;height:26px;margin:0;padding:0;border:0;border-radius:4px;background:transparent;color:#fff;font-size:20px;line-height:1;cursor:pointer}
+#pauseAlert .close:hover{background:rgba(255,255,255,.25)}
+@keyframes pa-pop{from{opacity:0;transform:translateY(-8px) scale(.96)}to{opacity:1;transform:none}}
+@media(max-width:560px){#pauseAlert{top:12px;right:12px}}
+</style>
+</head>
+<body>
+<div class="app">
+<main class="main">
+<div class="hero"><h1>Terminal FaceBreak</h1><p>Posicione o rosto na área de identificação. O registro acontece automaticamente.</p></div>
+<div class="layout">
+<section class="card"><div class="head"><h2>Reconhecimento automático</h2><span class="badge blue" id="camState">Inicializando câmera</span></div><div class="body"><div class="camera"><video id="video" autoplay muted playsinline></video><div class="placeholder" id="placeholder"><strong style="font-size:16px;font-weight:700;color:#e2e8f0">Aproxime o rosto</strong><p style="font-size:12px;line-height:1.5;max-width:210px;margin:8px auto 0">O reconhecimento acontece automaticamente.</p></div><div class="hint" id="hint">Aguardando um rosto...</div></div><div class="auto-state"><span class="pulse" id="pulse"></span><div><strong id="scanState">Aguardando rosto</strong><small id="scanDetail">O terminal está pronto para identificar.</small></div></div></div></section>
+<section class="card"><div class="head"><h2>Situação do funcionário</h2><span class="badge green-b" id="modeBadge">Aguardando</span></div><div class="body">
+<div class="employee"><div class="avatar" id="avatar">?</div><div><strong id="employeeName">Aguardando identificação</strong><span id="employeeSector">Posicione o rosto e faça a captura</span></div></div>
+<div class="status"><div class="status-title">SITUAÇÃO ATUAL</div><div class="status-value" id="statusText">Aguardando registro</div></div>
+<div class="auto-action"><strong id="autoActionTitle">Aguardando identificação</strong><span id="autoActionText">A próxima ação será registrada automaticamente de acordo com o estado atual.</span></div>
+<div style="margin-top:20px"><strong style="font-size:13px">Últimos registros</strong><div id="events" style="margin-top:8px"></div></div><div class="active-list"><div class="active-head"><strong>Em expediente neste terminal</strong><span class="active-count" id="activeCount">0 trabalhadores</span></div><div id="activeWorkers"><div class="empty-active">Nenhum trabalhador em expediente.</div></div></div>
+</div></section>
+</div>
+</main>
+</div>
+<div class="pause-alert" id="pauseAlert" role="alert"><div class="bubble"><button type="button" class="close" aria-label="Fechar aviso" onclick="closePauseAlert()">×</button><h2>⚠ Pausa obrigatória em andamento</h2><p id="pauseAlertName"></p><p id="pauseAlertText"></p></div></div>
+<div class="corner-note" id="cornerNote"></div>
+<div class="toast" id="toast"></div>
+<script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api/dist/face-api.js"></script>
+<script>
+const API='/api';
+let stream=null,identifiedWorker=null,modelsReady=false,scanLoop=null,recognizing=false,armed=true,faceAbsentSince=0,lastActionAt=0;
+const $=id=>document.getElementById(id);
+const fmtSec=s=>{s=Number(s);if(!Number.isFinite(s))s=0;s=Math.max(0,Math.floor(s));const h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sec=s%60;const out=h?`${h}:${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`:`${m}:${String(sec).padStart(2,'0')}`;return out};
+async function api(path,opts={}){const r=await fetch(API+path,{headers:{'Content-Type':'application/json',...(opts.headers||{})},...opts});const j=await r.json();if(!r.ok)throw Error(j.error||'Erro');return j}
+function fmt(iso){return new Date(iso).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'})}
+function initials(n){return n.split(' ').map(x=>x[0]).slice(0,2).join('').toUpperCase()}
+let toastTimer;function toast(t,ms=2500){$('toast').textContent=t;$('toast').classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').classList.remove('show'),ms)}
+let noteTimer;function cornerNote(name,text,ms=5000){const n=$('cornerNote');n.textContent='';const a=document.createElement('strong');a.textContent=name;const b=document.createElement('span');b.textContent=text;n.append(a,b);n.classList.add('show');clearTimeout(noteTimer);noteTimer=setTimeout(()=>n.classList.remove('show'),ms)}
+let alertTimer,audioCtx;function beep(){try{audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();for(let i=0;i<3;i++){const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.frequency.value=880;g.gain.value=.15;o.connect(g);g.connect(audioCtx.destination);o.start(audioCtx.currentTime+i*.35);o.stop(audioCtx.currentTime+i*.35+.2)}}catch(_){}}
+function showPauseAlert(name,left,registered){$('pauseAlertName').textContent=name;$('pauseAlertText').textContent=(left>0?`Identificado durante o horário de pausa obrigatória. Restam ${fmtSec(left)}.`:'Identificado durante a pausa.')+(registered?' Retorno bloqueado até o fim da pausa. Ocorrência registrada para análise.':'');$('pauseAlert').classList.add('show');beep()}
+function closePauseAlert(){$('pauseAlert').classList.remove('show')}
+function setStatus(t,b='green-b'){$('statusText').textContent=t;$('modeBadge').className='badge '+b;$('modeBadge').textContent=t}
+function setScanState(title,detail,kind=''){$('scanState').textContent=title;$('scanDetail').textContent=detail;$('pulse').className='pulse '+kind;const g=document.querySelector('.camera');if(g)g.className='camera '+(kind||(/n[ãa]o reconhecido|indispon|Apenas/i.test(title)?'warn':''))}
+async function loadModels(){try{setScanState('Carregando reconhecimento','Preparando a identificação facial...');await Promise.all([faceapi.nets.tinyFaceDetector.loadFromUri('https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model'),faceapi.nets.faceLandmark68TinyNet.loadFromUri('https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model'),faceapi.nets.faceRecognitionNet.loadFromUri('https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model')]);modelsReady=true}catch(e){console.error(e);setScanState('Reconhecimento indisponível','Verifique a conexão com a internet.');toast('Não foi possível carregar o modelo facial.')}}
+async function camera(){try{if(!modelsReady)await loadModels();if(!modelsReady)return;stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:720},height:{ideal:720}},audio:false});$('video').srcObject=stream;$('placeholder').style.display='none';$('camState').className='badge green-b';$('camState').textContent='Câmera ativa';setScanState('Aguardando rosto','Entre na área de identificação.','active');scanLoop=setInterval(scan,350)}catch(e){console.error(e);$('camState').className='badge red-b';$('camState').textContent='Câmera bloqueada';setScanState('Câmera indisponível','Permita o acesso à câmera para continuar.');toast('Permita o acesso à câmera para continuar.')}}
+async function scan(){
+ if(!modelsReady||!stream||recognizing)return;
+ const v=$('video');if(v.readyState<2)return;
+ try{
+  const detections=await faceapi.detectAllFaces(v,new faceapi.TinyFaceDetectorOptions({inputSize:320,scoreThreshold:.65})).withFaceLandmarks(true).withFaceDescriptors();
+  if(!detections.length){if(!faceAbsentSince)faceAbsentSince=Date.now();if(Date.now()-faceAbsentSince>900){armed=true;identifiedWorker=null;setScanState('Aguardando rosto','Entre na área de identificação.','active');$('hint').textContent='Aguardando um rosto...'}return}
+  faceAbsentSince=0;
+  if(!armed||Date.now()-lastActionAt<500)return;
+  recognizing=true;armed=false;
+  const multiple=detections.length>1;
+  setScanState(multiple?'Reconhecimento múltiplo': 'Identificando...',multiple?`${detections.length} rostos detectados. Identificando cada pessoa separadamente.`:'Comparando seu rosto com os cadastros.','active');
+  $('hint').textContent=multiple?'Reconhecendo múltiplos funcionários...':'Reconhecendo rosto...';
+  const seen=new Set(),results=[];
+  for(const det of detections){
+   try{
+    const match=await api('/face/recognize',{method:'POST',body:JSON.stringify({descriptor:Array.from(det.descriptor)})});
+    if(!match.employee||seen.has(String(match.employee.id)))continue;
+    seen.add(String(match.employee.id));
+    const worker=match.employee;
+    try{
+      const cur=await api('/employees/'+worker.id+'/current');
+      if(cur.record&&cur.record.paused){const left=Math.max(0,(cur.employee.breakMinutes*60)-(Date.now()-Date.parse(cur.record.pauseStart))/1000);if(left<=0)showPauseAlert(worker.name,0,false);}
+    }catch(_){}
+    try{
+      const action=await api('/attendance/action',{method:'POST',body:JSON.stringify({employeeId:worker.id})});
+      results.push({worker,action});
+    }catch(err){results.push({worker,error:err.message});}
+   }catch(err){/* rosto não cadastrado: continua com os demais rostos detectados */}
+  }
+  lastActionAt=Date.now();
+  if(results.length){
+   const first=results[0];identifiedWorker=first.worker;
+   $('employeeName').textContent=multiple?`${results.length} funcionário(s) reconhecido(s)`:first.worker.name;
+   $('employeeSector').textContent=multiple?'Registros processados individualmente':first.worker.sector;
+   $('avatar').textContent=multiple?String(results.length):initials(first.worker.name);
+   let success=0,blocked=0,errors=0;
+   for(const item of results){
+    if(item.error){errors++;continue;}
+    if(item.action.action==='blocked'){blocked++;showPauseAlert(item.worker.name,item.action.remainingSeconds,true);}
+    else if(item.action.action==='return'&&item.action.compliance!=='Cumprida')cornerNote(item.worker.name,'Retorno registrado com ocorrência: '+item.action.compliance+'.');
+    else success++;
+   }
+   const summary=results.map(x=>x.worker.name+': '+(x.error||x.action.message)).join(' | ');
+   setScanState('Reconhecimento concluído',summary,'success');
+   $('hint').textContent=`Processamento concluído: ${success} registro(s), ${blocked} bloqueio(s), ${errors} erro(s). Afaste os rostos para liberar nova leitura.`;
+   const firstAction=first.action;
+   if(firstAction){setStatus(firstAction.label,firstAction.badge);$('autoActionTitle').textContent=multiple?'Reconhecimento múltiplo concluído':firstAction.label;$('autoActionText').textContent=summary;}
+   await render();await refreshActive();
+  }else{
+   setScanState('Nenhum funcionário reconhecido','Não foi possível associar os rostos aos cadastros ativos.','warn');
+   $('hint').textContent='Nenhum rosto reconhecido. Afaste-se e tente novamente.';toast('Nenhum funcionário reconhecido.');
+  }
+ }catch(e){console.error(e);toast(e.message||'Falha no reconhecimento facial.');setScanState('Falha no reconhecimento','Verifique a câmera e tente novamente.','warn');}
+ finally{recognizing=false;setTimeout(()=>{if(stream){armed=true}},1000)}
+}
+function timerClass(w){if(w.phase!=='pause')return '';const s=Number(w.remainingSeconds)||0;if(s<=0)return 'overdue';if(s<=180)return 'warning';return ''}
+async function refreshActive(){try{const data=await api('/terminal/active');$('activeCount').textContent=`${data.count} ${data.count===1?'trabalhador':'trabalhadores'}`;$('activeWorkers').innerHTML=data.workers.length?data.workers.map(w=>{const left=Math.max(0,Number(w.remainingSeconds)||0);const ended=w.phase==='pause'&&left<=0;const cls=timerClass({phase:w.phase,remainingSeconds:left});const st=ended?'overdue':(w.phase==='pause'?'pause':'work');const label=ended?'Pausa encerrada':w.status;return `<div class="active-worker"><div><span class="active-name">${w.name}</span><span class="active-sector">${w.sector}</span></div><div class="active-worker-right"><span class="active-timer ${cls}" data-remaining="${left}" data-phase="${w.phase}" data-id="${w.id}" data-name="${w.name}" data-since="${w.since}">${fmtSec(left)}</span><span class="active-status ${st}">${label}</span></div></div>`}).join(''):'<div class="empty-active">Nenhum trabalhador em expediente.</div>'}catch(e){console.error(e)}}
+function updateActiveTimers(){document.querySelectorAll('.active-timer[data-remaining]').forEach(el=>{const left=Math.max(0,Number(el.dataset.remaining)||0);el.textContent=fmtSec(left);if(el.dataset.phase==='pause'){el.classList.toggle('warning',left>0&&left<=180);el.classList.toggle('overdue',left<=0);if(left<=0){const st=el.parentElement.querySelector('.active-status');if(st){st.className='active-status overdue';st.textContent='Pausa encerrada'}}}el.dataset.remaining=String(Math.max(0,left-1))})}
+async function render(){if(!identifiedWorker){$('employeeName').textContent='Aguardando identificação';$('employeeSector').textContent='O funcionário será identificado automaticamente';$('avatar').textContent='?';return}const s=await api('/employees/'+identifiedWorker.id+'/current');if(!s.record){setStatus('Aguardando entrada','blue')}else if(s.record.paused){const elapsed=(Date.now()-new Date(s.record.pauseStart))/1000,limit=s.employee.breakMinutes*60,remaining=Math.max(0,limit-elapsed);setStatus(remaining>0?'Em pausa':'Retorno pendente',remaining>0?'yellow-b':'red-b');}else if(s.record.active){const lastEnd=s.lastBreakEnd?new Date(s.lastBreakEnd):new Date(s.record.entry);const elapsed=(Date.now()-lastEnd)/1000,until=Math.max(0,s.employee.workMinutes*60-elapsed);setStatus(until>0?'Trabalhando':'Pausa disponível',until>0?'green-b':'blue')}else setStatus('Jornada encerrada','blue');renderEvents(s.events)}
+function renderEvents(arr){$('events').innerHTML=arr.length?arr.slice(-6).reverse().map(e=>`<div class="event"><span>${e.label}</span><strong>${fmt(e.time)}</strong></div>`).join(''):'<div style="color:var(--muted);font-size:11px;padding-top:8px">Nenhum registro ainda.</div>'}
+setInterval(()=>{updateActiveTimers();if(identifiedWorker)render()},1000);setInterval(refreshActive,2000);
+(async()=>{await loadModels();await camera();await refreshActive();})();
+</script>
+</body></html>
